@@ -6,12 +6,12 @@ Script is created for automate the process of creation gitlab repository and pus
 ### How to use gitlab-remote-v1.0:
 1. Copy gitlab-remote-v1.0 to your directory with files.
 2. Script is done with the suggestion that you haven't used git in this folder before (there is no .git folder).
-3. Enter http://git.devs.domerp.com
+3. Enter https://gitlab.com
 4. Select Profile Settings (upper right corner, dropdown list).
 5. Select Account Tab and copy your private token (**this is very important!**).
 6. Open terminal and cd to your directory.
 7. Run ```./gitlab-remote-v1.0 name-of-repo private-token```    
-For example, ./gitlab-remote-v1.0 blablabla qmXxвKsyqhtTtivskBT // where blablabla is the name of repository.
+For example, ./gitlab-remote-v1.0 blablabla ${token} // where blablabla is the name of repository and ${token} is your private token.
 8. Done (you will see address location of your repo).
 
 ### How to use gitlab-remote-v1.1:
