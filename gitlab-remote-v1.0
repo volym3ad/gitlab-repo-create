@@ -32,7 +32,7 @@ fi
 username=`git config user.email | cut -d '@' -f1`
 
 echo -n "Creating GitLab repository '$repo_name' ..."
-curl -H "Content-Type:application/json" http://git.devs.domerp.com/api/v3/projects?private_token=$token -d '{"name":"'$repo_name'"}' > /dev/null 2>&1
+curl -H "Content-Type:application/json" https://gitlab.com/api/v3/projects?private_token=$token -d '{"name":"'$repo_name'"}' > /dev/null 2>&1
 echo " done."
 
 # 2>$1 means that we want redirect stderr to stdout
@@ -44,10 +44,10 @@ echo ".gitignore" >> .gitignore
 git config --global core.excudefiles ~/.gitignore_global
 git add .
 git commit -m "first commit"
-git remote add origin git@git.devs.domerp.com:$username/$repo_name.git > /dev/null 2>&1
+git remote add origin git@gitlab.com:$username/$repo_name.git > /dev/null 2>&1
 git push -u origin master > /dev/null 2>&1
 echo " done."
 
 echo ""
 echo "The created repo is available at following link:"
-echo "http://git.devs.domerp.com/$username/$repo_name"
+echo "https://gitlab.com/$username/$repo_name"

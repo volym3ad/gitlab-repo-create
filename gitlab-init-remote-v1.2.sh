@@ -10,10 +10,6 @@ echo "2 argument - name of the repo you want to create"
 exit 1
 fi
 
-if [ $# -ne 2 ]; then
-echo "Not the expected number of arguments. Expected 2."
-fi
-
 if [ "$username" = "" ]; then
 echo "Could not find username, please provide it."
 exit 1
@@ -22,14 +18,12 @@ fi
 dir_name=`basename $(pwd)`
 
 if [ "$repo_name" = "" ]; then
-echo "Repo name (hit enter to use '$dir_name')?"
-read repo_name
+read -p "Repo name (hit enter to use '$dir_name')? " repo_name
 fi
 
 if [ "$repo_name" = "" ]; then
 repo_name=$dir_name
 fi
-
 
 # ask user for password
 read -s -p "Enter Password: " password
@@ -54,12 +48,38 @@ git init
 echo "gitlab-init-remote.sh" > .gitignore
 echo ".gitignore" >> .gitignore
 git config --global core.excudefiles ~/.gitignore_global
+git config --global user.name=$username
 git add .
 git commit -m "first commit"
-git remote add origin git@gitlab.com:$username/$repo_name.git > /dev/null 2>&1
+git remote add origin https://gitlab.com/$username/$repo_name.git > /dev/null 2>&1
 git push -u origin master > /dev/null 2>&1
 echo " done."
 
+read -r -p "Do you want to add a user to your repository? [y/n] " input
+case $input in
+	[yY][eE][sS]|[yY])
+		read -p "Enter username: " newuser
+		echo "Enter access_level"
+		echo "10 => Guest access"
+		echo "20 => Reporter access"
+		echo "30 => Developer access"
+		echo "40 => Master access"
+		read -p "50 => Owner access # Only valid for groups - " access
+
+		# find out id of the project and user_id
+		id=`curl --header "PRIVATE-TOKEN: $token" https://gitlab.com/api/v3/projects | cut -d , -f1 | cut -d : -f2`
+		user_id=`curl --header "PRIVATE-TOKEN: $token" https://gitlab.com/api/v3/users?username=$newuser | cut -d , -f3 | cut -d : -f2`
+		# add user to gitlab project
+		curl --request POST --header "PRIVATE-TOKEN: $token" --data "user_id=$user_id&access_level=$access" https://gitlab.com/api/v3/projects/$id/members
+		;;
+	[nN][oO]|[nN])
+		echo "As you wish, master."
+		;;
+	*)
+		echo "Invalid input..."
+		;;
+esac
+
 echo ""
 echo "The created repo is available at following link:"
-echo "https://gitlab.com/$username/$repo_name"
+echo "http://gitlab.com/$username/$repo_name"
